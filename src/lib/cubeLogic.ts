@@ -1,7 +1,7 @@
 type Face = "px" | "nx" | "py" | "ny" | "pz" | "nz";
 type FaceColorMap = Partial<Record<Face, string>>;
 
-type Cubelet = {
+export type Cubelet = {
   id: string; // unique ID
   position: [number, number, number]; // x, y, z from -1 to 1
   colors: FaceColorMap; // only visible faces
