@@ -1,55 +1,43 @@
+"use client";
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState } from "react";
-import * as THREE from "three";
-import Cubelet, { FaceColorMap } from "./Cubelet";
-
-type CubeletData = {
-  id: string;
-  position: [number, number, number];
-  colors: FaceColorMap;
-};
+import { Group } from "three";
 
 type Props = {
-  cubelets: CubeletData[];
   axis: "x" | "y" | "z";
   direction: 1 | -1;
   onComplete: () => void;
+  children: React.ReactNode;
 };
 
 export default function RotatingLayer({
-  cubelets,
   axis,
   direction,
   onComplete,
+  children,
 }: Props) {
-  const groupRef = useRef<THREE.Group>(null);
+  const group = useRef<Group>(null);
   const [angle, setAngle] = useState(0);
-  const speed = 0.1;
+  const speed = Math.PI / 2 / 15; // 90° in ~15 frames
 
   useFrame(() => {
-    if (!groupRef.current) return;
+    if (!group.current) return;
 
     const delta = speed * direction;
-    const nextAngle = angle + delta;
 
-    if (Math.abs(nextAngle) >= Math.PI / 2) {
-      groupRef.current.rotation[axis] = (Math.PI / 2) * direction;
-      onComplete(); // notify Scene to update state
-    } else {
-      groupRef.current.rotation[axis] = nextAngle;
-      setAngle(nextAngle);
+    let newAngle = angle + delta;
+    if (Math.abs(newAngle) >= Math.PI / 2) {
+      newAngle = (Math.sign(newAngle) * Math.PI) / 2;
+    }
+
+    setAngle(newAngle);
+
+    group.current.rotation[axis] = newAngle;
+
+    if (Math.abs(newAngle) >= Math.PI / 2 - 0.0001) {
+      onComplete(); // signal end of animation
     }
   });
 
-  return (
-    <group ref={groupRef}>
-      {cubelets.map((c) => (
-        <Cubelet
-          key={c.id}
-          position={new THREE.Vector3(...c.position)}
-          colors={c.colors}
-        />
-      ))}
-    </group>
-  );
+  return <group ref={group}>{children}</group>;
 }

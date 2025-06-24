@@ -1,88 +1,156 @@
 "use client";
-import { Cubelet as CubeletType } from "@/lib/cubeLogic";
 import { useCubeStore } from "@/store/useCubeStore";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import * as THREE from "three";
 import Cubelet, { Face } from "./Cubelet";
 import RotatingLayer from "./RotatingLayer";
 
 export default function Scene() {
   const cube = useCubeStore((s) => s.cube);
-  const groupRef = useRef<THREE.Group>(null);
+  const rotateLayer = useCubeStore((s) => s.rotateLayer);
+  const inputLocked = useCubeStore((s) => s.inputLocked);
+  const setInputLocked = useCubeStore((s) => s.setInputLocked);
 
-  const [rotatingLayer, setRotatingLayer] = useState<{
+  const [pendingRotation, setPendingRotation] = useState<null | {
     axis: "x" | "y" | "z";
-    layerValue: number;
+    layer: number;
     direction: 1 | -1;
-    cubelets: CubeletType[];
-  } | null>(null);
+  }>(null);
 
-  function triggerRotation(face: Face, position: [number, number, number]) {
-    // Step 1: Determine axis & layer
+  function resolveDragRotation(
+    face: Face,
+    pos: [number, number, number],
+    drag: { dx: number; dy: number }
+  ): { axis: "x" | "y" | "z"; layer: number; direction: 1 | -1 } | null {
+    const threshold = 5;
+    const { dx, dy } = drag;
+    if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) return null;
+
     let axis: "x" | "y" | "z";
-    let layerValue: number;
-    let direction: 1 | -1 = 1; // default direction for now
+    let direction: 1 | -1;
 
-    if (face === "px" || face === "nx") {
-      axis = "x";
-      layerValue = position[0];
-      direction = face === "px" ? 1 : -1;
-    } else if (face === "py" || face === "ny") {
-      axis = "y";
-      layerValue = position[1];
-      direction = face === "py" ? 1 : -1;
-    } else {
-      axis = "z";
-      layerValue = position[2];
-      direction = face === "pz" ? 1 : -1;
+    switch (face) {
+      case "pz":
+      case "nz":
+        axis = Math.abs(dx) > Math.abs(dy) ? "y" : "x";
+        direction =
+          face === "pz"
+            ? ((Math.sign(dx) * (axis === "y" ? 1 : -1)) as 1 | -1)
+            : ((Math.sign(dx) * (axis === "y" ? -1 : 1)) as 1 | -1);
+        break;
+
+      case "px":
+      case "nx":
+        axis = Math.abs(dx) > Math.abs(dy) ? "z" : "y";
+        direction =
+          face === "px"
+            ? ((Math.sign(dx) * (axis === "z" ? -1 : 1)) as 1 | -1)
+            : ((Math.sign(dx) * (axis === "z" ? 1 : -1)) as 1 | -1);
+        break;
+
+      case "py":
+      case "ny":
+        axis = Math.abs(dx) > Math.abs(dy) ? "z" : "x";
+        direction =
+          face === "py"
+            ? ((Math.sign(dx) * (axis === "z" ? 1 : -1)) as 1 | -1)
+            : ((Math.sign(dx) * (axis === "z" ? -1 : 1)) as 1 | -1);
+        break;
+
+      default:
+        return null;
     }
 
-    const selected = cube.filter((c) => {
-      if (axis === "x") return c.position[0] === layerValue;
-      if (axis === "y") return c.position[1] === layerValue;
-      return c.position[2] === layerValue;
-    });
+    const layer = axis === "x" ? pos[0] : axis === "y" ? pos[1] : pos[2];
 
-    setRotatingLayer({
+    return {
       axis,
-      layerValue,
-      direction,
-      cubelets: selected,
-    });
+      layer,
+      direction: direction > 0 ? 1 : -1,
+    };
   }
 
-  function handleRotationComplete() {
-    // TODO: update the store (next segment)
-    setRotatingLayer(null);
-  }
+  const handleDrag = (
+    face: Face,
+    pos: [number, number, number],
+    drag: { dx: number; dy: number }
+  ) => {
+    if (inputLocked) {
+      console.log("🚫 Input locked, ignoring drag");
+      return;
+    }
+
+    const result = resolveDragRotation(face, pos, drag);
+    if (!result) return;
+
+    const { axis, layer, direction } = result;
+
+    console.log("🌀 Rotate:", { axis, layer, direction });
+
+    setInputLocked(true);
+    setPendingRotation({ axis, layer, direction });
+  };
+
+  const getLayerCubelets = (axis: "x" | "y" | "z", layer: number) => {
+    return cube.filter((cubelet) => {
+      const [x, y, z] = cubelet.position;
+      if (axis === "x") return x === layer;
+      if (axis === "y") return y === layer;
+      if (axis === "z") return z === layer;
+      return false;
+    });
+  };
+
+  const handleFaceClick = (face: Face, pos: [number, number, number]) => {
+    if (inputLocked) {
+      return;
+    }
+
+    console.log("👆 Face clicked:", face, "at", pos);
+
+    // For now, this is just for feedback
+  };
 
   return (
-    <group ref={groupRef}>
-      {cube
-        .filter((c) => {
-          if (!rotatingLayer) return true;
-          const [x, y, z] = c.position;
-          if (rotatingLayer.axis === "x") return x !== rotatingLayer.layerValue;
-          if (rotatingLayer.axis === "y") return y !== rotatingLayer.layerValue;
-          return z !== rotatingLayer.layerValue;
-        })
-        .map((cubelet) => (
+    <>
+      {pendingRotation ? (
+        <RotatingLayer
+          axis={pendingRotation.axis}
+          direction={pendingRotation.direction}
+          onComplete={() => {
+            rotateLayer(
+              pendingRotation.axis,
+              pendingRotation.layer as 0 | 1 | -1,
+              pendingRotation.direction
+            );
+
+            setPendingRotation(null);
+            setInputLocked(false);
+          }}
+        >
+          {getLayerCubelets(pendingRotation.axis, pendingRotation.layer).map(
+            (cubelet) => (
+              <Cubelet
+                key={cubelet.id}
+                position={new THREE.Vector3(...cubelet.position)}
+                colors={cubelet.colors}
+                onFaceClick={handleFaceClick}
+                onFaceDrag={handleDrag}
+              />
+            )
+          )}
+        </RotatingLayer>
+      ) : (
+        cube.map((cubelet) => (
           <Cubelet
             key={cubelet.id}
             position={new THREE.Vector3(...cubelet.position)}
             colors={cubelet.colors}
-            onFaceClick={triggerRotation}
+            onFaceClick={handleFaceClick}
+            onFaceDrag={handleDrag}
           />
-        ))}
-
-      {rotatingLayer && (
-        <RotatingLayer
-          axis={rotatingLayer.axis}
-          direction={rotatingLayer.direction}
-          cubelets={rotatingLayer.cubelets}
-          onComplete={handleRotationComplete}
-        />
+        ))
       )}
-    </group>
+    </>
   );
 }

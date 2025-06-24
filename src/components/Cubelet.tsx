@@ -9,35 +9,37 @@ type CubeletProps = {
   position: Vector3;
   colors: FaceColorMap;
   onFaceClick?: (face: Face, position: [number, number, number]) => void;
+  onFaceDrag?: (
+    face: Face,
+    position: [number, number, number],
+    drag: { dx: number; dy: number }
+  ) => void;
 };
 
 export default function Cubelet({
   position,
   colors,
   onFaceClick,
+  onFaceDrag,
 }: CubeletProps) {
   const ref = useRef<Mesh>(null);
+  const dragStart = useRef<{ x: number; y: number; face: Face } | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const faceOrder: Face[] = ["px", "nx", "py", "ny", "pz", "nz"];
-  const baseMaterials = useMemo(() => {
-    const getColor = (face: Face) => colors[face] || "black";
-    return faceOrder.map(
-      (face) => new MeshStandardMaterial({ color: getColor(face) })
-    );
-  }, [colors]);
-
   const materials = useMemo(() => {
-    return baseMaterials.map((mat, i) => {
+    return faceOrder.map((face, i) => {
+      const color = colors[face] || "black";
+      const mat = new MeshStandardMaterial({ color });
+
       if (i === hoveredIndex) {
-        const hoverMat = mat.clone();
-        hoverMat.color.set("#aaaaaa");
-        hoverMat.emissive.set("#333");
-        return hoverMat;
+        mat.emissive.set("#333");
+        mat.color.set("#aaaaaa");
       }
+
       return mat;
     });
-  }, [hoveredIndex]); // <- Only depend on hovered index
+  }, [colors, hoveredIndex]);
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     const faceIndex = e.faceIndex ?? -1;
@@ -50,12 +52,29 @@ export default function Cubelet({
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation(); // Prevent bubbling to other cubelets
+    e.stopPropagation();
 
     const faceIndex = e.faceIndex ?? -1;
     const matIndex = Math.floor(faceIndex / 2);
     const face = faceOrder[matIndex];
     const [x, y, z] = [position.x, position.y, position.z];
+
+    dragStart.current = { x: e.clientX, y: e.clientY, face };
+
+    const handlePointerUp = (eUp: PointerEvent) => {
+      if (!dragStart.current) return;
+
+      const dx = eUp.clientX - dragStart.current.x;
+      const dy = eUp.clientY - dragStart.current.y;
+
+      onFaceDrag?.(dragStart.current.face, [x, y, z], { dx, dy });
+
+      dragStart.current = null;
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+
+    // Attach global listener for pointerup
+    window.addEventListener("pointerup", handlePointerUp, { once: true });
 
     onFaceClick?.(face, [x, y, z]);
   };
