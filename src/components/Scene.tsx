@@ -8,8 +8,6 @@ import RotatingLayer from "./RotatingLayer";
 export default function Scene() {
   const cube = useCubeStore((s) => s.cube);
   const rotateLayer = useCubeStore((s) => s.rotateLayer);
-  const inputLocked = useCubeStore((s) => s.inputLocked);
-  const setInputLocked = useCubeStore((s) => s.setInputLocked);
 
   const [pendingRotation, setPendingRotation] = useState<null | {
     axis: "x" | "y" | "z";
@@ -24,49 +22,64 @@ export default function Scene() {
   ): { axis: "x" | "y" | "z"; layer: number; direction: 1 | -1 } | null {
     const threshold = 5;
     const { dx, dy } = drag;
+
+    // If no significant drag, ignore
     if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) return null;
+
+    // Determine major direction
+    const isHorizontal = Math.abs(dx) > Math.abs(dy);
 
     let axis: "x" | "y" | "z";
     let direction: 1 | -1;
+    let layer: number;
+
+    const [x, y, z] = pos;
 
     switch (face) {
-      case "pz":
-      case "nz":
-        axis = Math.abs(dx) > Math.abs(dy) ? "y" : "x";
-        direction =
-          face === "pz"
-            ? ((Math.sign(dx) * (axis === "y" ? 1 : -1)) as 1 | -1)
-            : ((Math.sign(dx) * (axis === "y" ? -1 : 1)) as 1 | -1);
+      case "pz": // Front face
+        axis = isHorizontal ? "y" : "x";
+        layer = isHorizontal ? y : x;
+        direction = isHorizontal ? (dx > 0 ? 1 : -1) : dy > 0 ? -1 : 1;
         break;
 
-      case "px":
-      case "nx":
-        axis = Math.abs(dx) > Math.abs(dy) ? "z" : "y";
-        direction =
-          face === "px"
-            ? ((Math.sign(dx) * (axis === "z" ? -1 : 1)) as 1 | -1)
-            : ((Math.sign(dx) * (axis === "z" ? 1 : -1)) as 1 | -1);
+      case "nz": // Back face
+        axis = isHorizontal ? "y" : "x";
+        layer = isHorizontal ? y : x;
+        direction = isHorizontal ? (dx > 0 ? -1 : 1) : dy > 0 ? 1 : -1;
         break;
 
-      case "py":
-      case "ny":
-        axis = Math.abs(dx) > Math.abs(dy) ? "z" : "x";
-        direction =
-          face === "py"
-            ? ((Math.sign(dx) * (axis === "z" ? 1 : -1)) as 1 | -1)
-            : ((Math.sign(dx) * (axis === "z" ? -1 : 1)) as 1 | -1);
+      case "px": // Right face
+        axis = isHorizontal ? "z" : "y";
+        layer = isHorizontal ? z : y;
+        direction = isHorizontal ? (dx > 0 ? -1 : 1) : dy > 0 ? -1 : 1;
+        break;
+
+      case "nx": // Left face
+        axis = isHorizontal ? "z" : "y";
+        layer = isHorizontal ? z : y;
+        direction = isHorizontal ? (dx > 0 ? 1 : -1) : dy > 0 ? 1 : -1;
+        break;
+
+      case "py": // Top face
+        axis = isHorizontal ? "z" : "x";
+        layer = isHorizontal ? z : x;
+        direction = isHorizontal ? (dx > 0 ? 1 : -1) : dy > 0 ? 1 : -1;
+        break;
+
+      case "ny": // Bottom face
+        axis = isHorizontal ? "z" : "x";
+        layer = isHorizontal ? z : x;
+        direction = isHorizontal ? (dx > 0 ? -1 : 1) : dy > 0 ? -1 : 1;
         break;
 
       default:
         return null;
     }
 
-    const layer = axis === "x" ? pos[0] : axis === "y" ? pos[1] : pos[2];
-
     return {
       axis,
       layer,
-      direction: direction > 0 ? 1 : -1,
+      direction,
     };
   }
 
@@ -75,20 +88,14 @@ export default function Scene() {
     pos: [number, number, number],
     drag: { dx: number; dy: number }
   ) => {
-    if (inputLocked) {
-      console.log("🚫 Input locked, ignoring drag");
-      return;
-    }
-
     const result = resolveDragRotation(face, pos, drag);
     if (!result) return;
 
     const { axis, layer, direction } = result;
 
-    console.log("🌀 Rotate:", { axis, layer, direction });
-
-    setInputLocked(true);
-    setPendingRotation({ axis, layer, direction });
+    setTimeout(() => {
+      setPendingRotation({ axis, layer, direction });
+    }, 200); // Small delay to allow UI feedback
   };
 
   const getLayerCubelets = (axis: "x" | "y" | "z", layer: number) => {
@@ -102,10 +109,6 @@ export default function Scene() {
   };
 
   const handleFaceClick = (face: Face, pos: [number, number, number]) => {
-    if (inputLocked) {
-      return;
-    }
-
     console.log("👆 Face clicked:", face, "at", pos);
 
     // For now, this is just for feedback
@@ -125,7 +128,6 @@ export default function Scene() {
             );
 
             setPendingRotation(null);
-            setInputLocked(false);
           }}
         >
           {getLayerCubelets(pendingRotation.axis, pendingRotation.layer).map(

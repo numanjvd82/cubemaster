@@ -11,12 +11,12 @@ type CubeState = Cubelet[];
 
 export function createSolvedCube(): CubeState {
   const faceColors = {
-    px: "red",
-    nx: "orange",
-    py: "white",
-    ny: "yellow",
-    pz: "green",
-    nz: "blue",
+    px: "#E63946", // Red
+    nx: "#F4A261", // Orange
+    py: "#F1FAEE", // Off White
+    ny: "#FFD166", // Soft Yellow
+    pz: "#06D6A0", // Mint Green
+    nz: "#118AB2", // Sky Blue
   };
 
   const cubelets: Cubelet[] = [];

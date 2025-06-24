@@ -9,8 +9,8 @@ type CubeStore = {
     layer: -1 | 0 | 1,
     direction: 1 | -1
   ) => void;
-  inputLocked: boolean;
-  setInputLocked: (locked: boolean) => void;
+  freeLook: boolean;
+  setFreeLook: (value: boolean) => void;
 };
 
 export const useCubeStore = create<CubeStore>((set) => ({
@@ -102,6 +102,6 @@ export const useCubeStore = create<CubeStore>((set) => ({
 
       return { cube: newCube };
     }),
-  inputLocked: false,
-  setInputLocked: (locked) => set({ inputLocked: locked }),
+  freeLook: false,
+  setFreeLook: (value) => set({ freeLook: value }),
 }));

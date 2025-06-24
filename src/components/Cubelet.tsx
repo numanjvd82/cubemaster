@@ -1,6 +1,6 @@
 import { ThreeEvent } from "@react-three/fiber";
 import { useMemo, useRef, useState } from "react";
-import { Mesh, MeshStandardMaterial, Vector3 } from "three";
+import { Color, Mesh, MeshStandardMaterial, Vector3 } from "three";
 
 export type Face = "px" | "nx" | "py" | "ny" | "pz" | "nz";
 export type FaceColorMap = Partial<Record<Face, string>>;
@@ -21,6 +21,7 @@ export default function Cubelet({
   colors,
   onFaceClick,
   onFaceDrag,
+  inputLocked,
 }: CubeletProps) {
   const ref = useRef<Mesh>(null);
   const dragStart = useRef<{ x: number; y: number; face: Face } | null>(null);
@@ -30,12 +31,13 @@ export default function Cubelet({
   const materials = useMemo(() => {
     return faceOrder.map((face, i) => {
       const color = colors[face] || "black";
-      const mat = new MeshStandardMaterial({ color });
-
-      if (i === hoveredIndex) {
-        mat.emissive.set("#333");
-        mat.color.set("#aaaaaa");
-      }
+      const mat = new MeshStandardMaterial({
+        color,
+        roughness: 0.4,
+        metalness: 0.2,
+        emissive: i === hoveredIndex ? new Color("#ccc") : new Color("black"),
+        emissiveIntensity: 0.3,
+      });
 
       return mat;
     });
@@ -54,6 +56,8 @@ export default function Cubelet({
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
 
+    if (inputLocked) return; // Ignore if input is locked
+
     const faceIndex = e.faceIndex ?? -1;
     const matIndex = Math.floor(faceIndex / 2);
     const face = faceOrder[matIndex];
@@ -62,7 +66,7 @@ export default function Cubelet({
     dragStart.current = { x: e.clientX, y: e.clientY, face };
 
     const handlePointerUp = (eUp: PointerEvent) => {
-      if (!dragStart.current) return;
+      if (inputLocked || !dragStart.current) return;
 
       const dx = eUp.clientX - dragStart.current.x;
       const dy = eUp.clientY - dragStart.current.y;
