@@ -21,7 +21,6 @@ export default function Cubelet({
   colors,
   onFaceClick,
   onFaceDrag,
-  inputLocked,
 }: CubeletProps) {
   const ref = useRef<Mesh>(null);
   const dragStart = useRef<{ x: number; y: number; face: Face } | null>(null);
@@ -30,7 +29,7 @@ export default function Cubelet({
   const faceOrder: Face[] = ["px", "nx", "py", "ny", "pz", "nz"];
   const materials = useMemo(() => {
     return faceOrder.map((face, i) => {
-      const color = colors[face] || "black";
+      const color = colors[face] || "#ccc"; // Default color if not specified
       const mat = new MeshStandardMaterial({
         color,
         roughness: 0.4,
@@ -56,8 +55,6 @@ export default function Cubelet({
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
 
-    if (inputLocked) return; // Ignore if input is locked
-
     const faceIndex = e.faceIndex ?? -1;
     const matIndex = Math.floor(faceIndex / 2);
     const face = faceOrder[matIndex];
@@ -66,7 +63,7 @@ export default function Cubelet({
     dragStart.current = { x: e.clientX, y: e.clientY, face };
 
     const handlePointerUp = (eUp: PointerEvent) => {
-      if (inputLocked || !dragStart.current) return;
+      if (!dragStart.current) return;
 
       const dx = eUp.clientX - dragStart.current.x;
       const dy = eUp.clientY - dragStart.current.y;

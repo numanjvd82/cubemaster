@@ -2,8 +2,18 @@ import { Face, FaceColorMap } from "@/components/Cubelet";
 import { createSolvedCube } from "@/lib/cubeLogic";
 import { create } from "zustand";
 
+type Move = { axis: "x" | "y" | "z"; layer: number; direction: 1 | -1 };
+
 type CubeStore = {
   cube: ReturnType<typeof createSolvedCube>;
+  history: ReturnType<typeof createSolvedCube>[];
+  future: ReturnType<typeof createSolvedCube>[];
+  moveHistory: Move[];
+  scramble: (n: number) => void;
+  solve: () => void;
+  resetCube: () => void;
+  undo: () => void;
+  redo: () => void;
   rotateLayer: (
     axis: "x" | "y" | "z",
     layer: -1 | 0 | 1,
@@ -13,10 +23,46 @@ type CubeStore = {
   setFreeLook: (value: boolean) => void;
 };
 
-export const useCubeStore = create<CubeStore>((set) => ({
+export const useCubeStore = create<CubeStore>((set, get) => ({
   cube: createSolvedCube(),
+  history: [],
+  future: [],
+  undo: () => {
+    const { history, cube, future } = get();
+    if (history.length === 0) return;
+
+    const prev = history[history.length - 1];
+    set({
+      cube: prev,
+      history: history.slice(0, -1),
+      future: [cube, ...future],
+    });
+  },
+
+  redo: () => {
+    const { future, history, cube } = get();
+    if (future.length === 0) return;
+
+    const next = future[0];
+    set({
+      cube: next,
+      history: [...history, cube],
+      future: future.slice(1),
+    });
+  },
+  resetCube: () => {
+    set({
+      cube: createSolvedCube(),
+      moveHistory: [],
+      history: [],
+      future: [],
+    });
+  },
+
   rotateLayer: (axis, layer, direction) =>
     set((state) => {
+      const { cube, history } = get();
+
       const newCube = state.cube.map((cubelet) => {
         const [x, y, z] = cubelet.position;
 
@@ -100,8 +146,62 @@ export const useCubeStore = create<CubeStore>((set) => ({
         };
       });
 
-      return { cube: newCube };
+      set({
+        cube: newCube,
+        history: [...history, cube],
+        future: [],
+      });
+
+      return {
+        cube: newCube,
+        moveHistory: [...state.moveHistory, { axis, layer, direction }],
+        history: [...history, cube],
+        future: [],
+      };
     }),
+
+  scramble: (n) => {
+    const { rotateLayer } = get();
+    const axes = ["x", "y", "z"] as const;
+    const layers = [-1, 0, 1];
+    const directions = [1, -1] as const;
+
+    for (let i = 0; i < n; i++) {
+      const axis = axes[Math.floor(Math.random() * axes.length)];
+      const layer = layers[Math.floor(Math.random() * layers.length)] as
+        | -1
+        | 0
+        | 1;
+      const direction =
+        directions[Math.floor(Math.random() * directions.length)];
+      rotateLayer(axis, layer, direction);
+    }
+  },
+
+  solve: () => {
+    const { moveHistory, rotateLayer } = get();
+    const reversed = [...moveHistory].reverse();
+
+    function step(i: number) {
+      if (i >= reversed.length) {
+        set({ moveHistory: [] }); // clear after solving
+        return;
+      }
+
+      const move = reversed[i];
+      rotateLayer(
+        move.axis,
+        move.layer as -1 | 0 | 1,
+        (move.direction * -1) as 1 | -1
+      );
+
+      setTimeout(() => step(i + 1), 300);
+    }
+
+    step(0);
+  },
+
+  moveHistory: [],
   freeLook: false,
   setFreeLook: (value) => set({ freeLook: value }),
 }));

@@ -93,9 +93,7 @@ export default function Scene() {
 
     const { axis, layer, direction } = result;
 
-    setTimeout(() => {
-      setPendingRotation({ axis, layer, direction });
-    }, 200); // Small delay to allow UI feedback
+    setPendingRotation({ axis, layer, direction });
   };
 
   const getLayerCubelets = (axis: "x" | "y" | "z", layer: number) => {
