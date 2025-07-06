@@ -61,11 +61,19 @@ model VerificationToken {
 }
 
 model GameResult {
-  id        String   @id @default(uuid())
-  userId    String
-  moves     Int
-  timeTaken Float
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  userId     String
+  moves      Int
+  timeTaken  Float
+  difficulty String
+  mode       String // "Classic", "TimeAttack", "Daily"
+  createdAt  DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model DailyChallenge {
+  id       String   @id @default(uuid())
+  scramble String
+  date     DateTime @unique
 }
