@@ -11,9 +11,11 @@
   "dependencies": {
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
+    "@next-auth/prisma-adapter": "^1.0.7",
     "@react-three/drei": "^10.3.0",
     "@react-three/fiber": "^9.1.2",
     "next": "15.3.4",
+    "next-auth": "^4.24.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.177.0",
@@ -27,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "prisma": "^6.11.1",
     "tailwindcss": "^4.1.10",
     "typescript": "^5"
   }
