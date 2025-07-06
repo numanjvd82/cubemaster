@@ -1,5 +1,8 @@
 ![image](https://github.com/user-attachments/assets/43d6bee5-5608-4ad6-999c-894b3c7f12cd)
 
+## Live Preview
+https://cubemaster.vercel.app/
+
 # 🧊 Cube Master
 
 A fully interactive **3D Rubik's Cube simulator** built with Next.js, React Three Fiber, and Zustand.
