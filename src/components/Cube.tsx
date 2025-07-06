@@ -20,84 +20,51 @@ export default function Cube() {
 
   return (
     <>
-      <Button
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          zIndex: 10,
-        }}
-        onClick={() => setFreeLook(!freeLook)}
-        className="rounded bg-sky-600 px-4 py-2 text-sm text-white data-active:bg-sky-700 data-hover:bg-sky-500"
-      >
-        {freeLook ? "🚫 Exit Free Look" : "🧭 Enter Free Look"}
-      </Button>
-      <Button
-        style={{
-          position: "absolute",
-          top: 10,
-          left: 10,
-          zIndex: 10,
-        }}
-        disabled={!canUndo}
-        onClick={() => undo()}
-        className="rounded bg-red-600 px-4 py-2 text-sm text-white data-active:bg-red-700 data-hover:bg-red-500 data-disabled:opacity-50 data-disabled:cursor-not-allowed"
-      >
-        Undo
-      </Button>
-      <Button
-        style={{
-          position: "absolute",
-          top: 10,
-          left: 80,
-          zIndex: 10,
-        }}
-        disabled={!canRedo}
-        onClick={() => redo()}
-        className="rounded bg-green-600 px-4 py-2 text-sm text-white
-        data-active:bg-green-700 data-hover:bg-green-500 data-disabled:opacity-50 data-disabled:cursor-not-allowed"
-      >
-        Redo
-      </Button>
+      <div className="absolute top-20 left-0 right-0 flex flex-wrap justify-center gap-2 px-4 z-10">
+        <Button
+          onClick={() => undo()}
+          disabled={!canUndo}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600/80 hover:bg-indigo-700/80 rounded-lg text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Undo
+        </Button>
 
-      <Button
-        style={{
-          position: "absolute",
-          top: 10,
-          left: 210,
-          zIndex: 10,
-        }}
-        onClick={() => resetCube()}
-        className="rounded bg-gray-600 px-4 py-2 text-sm text-white data-active:bg-gray-700 data-hover:bg-gray-500"
-      >
-        Reset Cube
-      </Button>
+        <Button
+          onClick={() => redo()}
+          disabled={!canRedo}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600/80 hover:bg-indigo-700/80 rounded-lg text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Redo
+        </Button>
 
-      <Button
-        style={{
-          position: "absolute",
-          top: 10,
-          left: 320,
-          zIndex: 10,
-        }}
-        onClick={() => scramble(10)}
-        className="rounded bg-yellow-600 px-4 py-2 text-sm text-white data-active:bg-yellow-700 data-hover:bg-yellow-500"
-      >
-        Scramble Cube
-      </Button>
+        <Button
+          onClick={() => resetCube()}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600/80 hover:bg-indigo-700/80 rounded-lg text-white transition-colors"
+        >
+          Reset Cube
+        </Button>
 
-      <Button
-        style={{
-          position: "absolute",
-          top: 10,
-          left: 455,
-          zIndex: 10,
-        }}
-        onClick={() => solve()}
-        className="rounded bg-blue-600 px-4 py-2 text-sm text-white data-active:bg-blue-700 data-hover:bg-blue-500"
-      >
-        Solve Cube
-      </Button>
+        <Button
+          onClick={() => scramble(10)}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600/80 hover:bg-indigo-700/80 rounded-lg text-white transition-colors"
+        >
+          Scramble Cube
+        </Button>
+
+        <Button
+          onClick={() => solve()}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600/80 hover:bg-indigo-700/80 rounded-lg text-white transition-colors"
+        >
+          Solve Cube
+        </Button>
+
+        <Button
+          onClick={() => setFreeLook(!freeLook)}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600/80 hover:bg-indigo-700/80 rounded-lg text-white transition-colors"
+        >
+          {freeLook ? "🚫 Exit Free Look" : "🧭 Enter Free Look"}
+        </Button>
+      </div>
 
       <Canvas camera={{ position: [6, 6, 6], fov: 50 }}>
         <ambientLight />
