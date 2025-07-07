@@ -125,7 +125,7 @@ export default function LandingPage() {
 
       {/* Info Section */}
       <section id="info" className="relative py-20 px-4 md:px-8">
-        <PatternOverlay pattern="grid" opacity={0.05} className="z-[1]">
+        <PatternOverlay pattern="circuit" opacity={0.1} className="z-[1]">
           <LandingInfo />
         </PatternOverlay>
       </section>
@@ -179,9 +179,9 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="py-10 px-4 md:px-8 text-center text-gray-400 relative overflow-hidden">
-        <PatternOverlay pattern="dots" opacity={0.05} className="z-[1]">
+        <PatternOverlay pattern="dots" opacity={0.1} className="z-[1]">
           <motion.div
-            className="absolute inset-0 z-0 bg-gradient-to-t from-indigo-900/20 to-transparent"
+            className="absolute inset-0 z-0 "
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
