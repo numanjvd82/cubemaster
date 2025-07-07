@@ -11,6 +11,8 @@ type CubeStore = {
   moveHistory: Move[];
   scramble: (n: number) => void;
   solve: () => void;
+  userMoves: number;
+  setUserMoves: (moves: number) => void;
   resetCube: () => void;
   undo: () => void;
   redo: () => void;
@@ -27,6 +29,8 @@ export const useCubeStore = create<CubeStore>((set, get) => ({
   cube: createSolvedCube(),
   history: [],
   future: [],
+  userMoves: 0,
+  setUserMoves: (moves) => set({ userMoves: moves }),
   undo: () => {
     const { history, cube, future } = get();
     if (history.length === 0) return;

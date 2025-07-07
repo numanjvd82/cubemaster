@@ -12,17 +12,23 @@ import { UserIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Fragment } from "react";
 
 export default function Header() {
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
+  const pathname = usePathname();
+
+  // Only fix the header on the home page
+  const isHomePage = pathname === "/";
+  const headerClasses = isHomePage
+    ? "h-16 p-2 flex justify-between items-center z-50 backdrop-blur-md bg-white/10 border-b border-white/20 fixed top-0 left-0 right-0 shadow-lg"
+    : "h-16 p-2 flex justify-between items-center z-20 backdrop-blur-md bg-indigo-600/40 border-b border-white/20 shadow-lg";
 
   return (
-    <header className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-20 backdrop-blur-md bg-white/5 rounded-b-lg">
-      <div className="flex items-center ">
-        <h1 className="text-2xl font-bold text-white">Cube Master</h1>
-      </div>
+    <header className={headerClasses}>
+      <h1 className="text-2xl font-bold text-white">Cube Master</h1>
 
       <div>
         {isLoading ? (
