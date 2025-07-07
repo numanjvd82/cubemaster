@@ -72,7 +72,7 @@ export function LandingInfo() {
                 />
               </mesh>
 
-              <Environment preset="city" />
+              <Environment preset="city" resolution={100} />
               <OrbitControls autoRotate enableZoom={false} />
             </Canvas>
           </div>

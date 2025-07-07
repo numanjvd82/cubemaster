@@ -19,7 +19,7 @@ export default function Header() {
   const isLoading = status === "loading";
 
   return (
-    <header className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10 backdrop-blur-md bg-white/5 rounded-b-lg">
+    <header className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-20 backdrop-blur-md bg-white/5 rounded-b-lg">
       <div className="flex items-center ">
         <h1 className="text-2xl font-bold text-white">Cube Master</h1>
       </div>
