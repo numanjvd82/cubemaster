@@ -8,7 +8,7 @@ export default function Cube() {
   const freeLook = useCubeStore((s) => s.freeLook);
 
   return (
-    <Canvas camera={{ position: [6, 6, 6], fov: 50 }}>
+    <Canvas className="w-full h-full" camera={{ position: [6, 6, 6], fov: 50 }}>
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
       <directionalLight

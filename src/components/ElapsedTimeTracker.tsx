@@ -9,7 +9,7 @@ type Props = {
   endTime: number | null;
 };
 
-export default function Timer({ startTime, endTime }: Props) {
+export default function ElapsedTimeTracker({ startTime, endTime }: Props) {
   const [elapsedTime, setElapsedTime] = useState(0);
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -20,14 +20,20 @@ export default function Timer({ startTime, endTime }: Props) {
   };
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
     if (startTime && !endTime) {
-      const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+      interval = setInterval(() => {
+        const now = Date.now();
+        const elapsed = Math.floor((now - startTime) / 1000);
+        setElapsedTime(elapsed);
       }, 1000);
-      return () => clearInterval(interval);
     } else if (endTime) {
       setElapsedTime(Math.floor((endTime - startTime!) / 1000));
     }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [startTime, endTime]);
 
   return (

@@ -1,5 +1,5 @@
 import { Face, FaceColorMap } from "@/components/Cubelet";
-import { createSolvedCube } from "@/lib/cubeLogic";
+import { createSolvedCube, isCubeSolved } from "@/lib/cubeLogic";
 import { create } from "zustand";
 
 type Move = { axis: "x" | "y" | "z"; layer: number; direction: 1 | -1 };
@@ -11,6 +11,7 @@ type CubeStore = {
   moveHistory: Move[];
   scramble: (n: number) => void;
   solve: () => void;
+  isCubeSolved: boolean;
   userMoves: number;
   setUserMoves: (moves: number) => void;
   resetCube: () => void;
@@ -30,6 +31,7 @@ export const useCubeStore = create<CubeStore>((set, get) => ({
   history: [],
   future: [],
   userMoves: 0,
+  isCubeSolved: false,
   setUserMoves: (moves) => set({ userMoves: moves }),
   undo: () => {
     const { history, cube, future } = get();
@@ -88,56 +90,39 @@ export const useCubeStore = create<CubeStore>((set, get) => ({
         }
 
         const rotateColors = (colors: FaceColorMap): FaceColorMap => {
-          const rotated: FaceColorMap = {};
-
-          const copy = (from: Face, to: Face) => {
-            if (colors[from]) rotated[to] = colors[from];
-          };
+          const rotated: FaceColorMap = { ...colors }; // Start with existing colors
 
           if (axis === "x") {
-            if (direction === 1) {
-              copy("py", "pz");
-              copy("pz", "ny");
-              copy("ny", "nz");
-              copy("nz", "py");
-            } else {
-              copy("py", "nz");
-              copy("nz", "ny");
-              copy("ny", "pz");
-              copy("pz", "py");
-            }
+            const seq =
+              direction === 1
+                ? ["py", "pz", "ny", "nz"]
+                : ["py", "nz", "ny", "pz"];
+            rotated[seq[0] as Face] = colors[seq[3] as Face];
+            rotated[seq[1] as Face] = colors[seq[0] as Face];
+            rotated[seq[2] as Face] = colors[seq[1] as Face];
+            rotated[seq[3] as Face] = colors[seq[2] as Face];
           } else if (axis === "y") {
-            if (direction === 1) {
-              copy("pz", "nx");
-              copy("nx", "nz");
-              copy("nz", "px");
-              copy("px", "pz");
-            } else {
-              copy("pz", "px");
-              copy("px", "nz");
-              copy("nz", "nx");
-              copy("nx", "pz");
-            }
+            const seq =
+              direction === 1
+                ? ["pz", "nx", "nz", "px"]
+                : ["pz", "px", "nz", "nx"];
+            rotated[seq[0] as Face] = colors[seq[3] as Face];
+            rotated[seq[1] as Face] = colors[seq[0] as Face];
+            rotated[seq[2] as Face] = colors[seq[1] as Face];
+            rotated[seq[3] as Face] = colors[seq[2] as Face];
           } else if (axis === "z") {
-            if (direction === 1) {
-              copy("px", "py");
-              copy("py", "nx");
-              copy("nx", "ny");
-              copy("ny", "px");
-            } else {
-              copy("px", "ny");
-              copy("ny", "nx");
-              copy("nx", "py");
-              copy("py", "px");
-            }
+            const seq =
+              direction === 1
+                ? ["px", "py", "nx", "ny"]
+                : ["px", "ny", "nx", "py"];
+            rotated[seq[0] as Face] = colors[seq[3] as Face];
+            rotated[seq[1] as Face] = colors[seq[0] as Face];
+            rotated[seq[2] as Face] = colors[seq[1] as Face];
+            rotated[seq[3] as Face] = colors[seq[2] as Face];
           }
 
-          // Preserve all other faces
-          for (const face of ["px", "nx", "py", "ny", "pz", "nz"] as Face[]) {
-            if (!rotated[face] && colors[face]) {
-              rotated[face] = colors[face];
-            }
-          }
+          // Clean up: remove any keys not applicable to this cubelet (if desired)
+          // Not strictly required if FaceColorMap is partial
 
           return rotated;
         };
@@ -150,11 +135,16 @@ export const useCubeStore = create<CubeStore>((set, get) => ({
         };
       });
 
+      const solved = isCubeSolved(newCube);
+      state.isCubeSolved = solved;
+
       set({
         cube: newCube,
         history: [...history, cube],
         future: [],
       });
+
+      state.setUserMoves(state.userMoves + 1);
 
       return {
         cube: newCube,

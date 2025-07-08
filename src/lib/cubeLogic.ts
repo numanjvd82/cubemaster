@@ -45,3 +45,21 @@ export function createSolvedCube(): CubeState {
 
   return cubelets;
 }
+
+export function isCubeSolved(cube: CubeState): boolean {
+  const faceColors: Record<string, string> = {};
+
+  for (const cubelet of cube) {
+    for (const [face, color] of Object.entries(cubelet.colors)) {
+      if (!color) continue; // Skip undefined faces
+
+      if (!faceColors[face]) {
+        faceColors[face] = color;
+      } else if (faceColors[face] !== color) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}

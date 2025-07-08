@@ -16,12 +16,14 @@ type PatternOverlayProps = {
   opacity?: number;
   className?: string;
   children?: ReactNode;
+  style?: React.CSSProperties;
 };
 
 export function PatternOverlay({
   pattern,
   opacity = 0.05,
   className = "",
+  style = {},
   children,
 }: PatternOverlayProps) {
   // Pattern definitions
@@ -303,7 +305,7 @@ export function PatternOverlay({
   };
 
   return (
-    <div className={`relative ${className}`}>
+    <div style={style} className={`relative ${className}`}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

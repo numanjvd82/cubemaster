@@ -31,8 +31,8 @@ export default function GameSelect() {
   };
 
   return (
-    <PatternOverlay pattern="squares">
-      <main className="w-full flex flex-col items-center justify-center gap-8 px-4 py-8 bg-gradient-to-b from-indigo-900 to-black/50 min-h-screen">
+    <PatternOverlay pattern="squares" opacity={0.08}>
+      <main className="w-full flex flex-col items-center justify-center gap-8 p-4  bg-gradient-to-b from-indigo-900 to-black/50 min-h-screen">
         <div className="bg-black/30 backdrop-blur-md p-8 rounded-xl max-w-2xl w-full border border-white/20 shadow-2xl">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-white mb-2">
