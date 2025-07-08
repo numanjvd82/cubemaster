@@ -1,34 +1,14 @@
-"use client";
-
 import { formatTime } from "@/lib/utils";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
 
 type Props = {
-  startTime: number | null;
-  endTime: number | null;
+  time: number; // Time in seconds
+  isCubeSolved: boolean;
 };
 
-export default function ElapsedTimeTracker({ startTime, endTime }: Props) {
-  const [elapsedTime, setElapsedTime] = useState(0);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (startTime && !endTime) {
-      interval = setInterval(() => {
-        const now = Date.now();
-        const elapsed = Math.floor((now - startTime) / 1000);
-        setElapsedTime(elapsed);
-      }, 1000);
-    } else if (endTime) {
-      setElapsedTime(Math.floor((endTime - startTime!) / 1000));
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [startTime, endTime]);
+export default function Timer({ time, isCubeSolved }: Props) {
+  const shouldAnimate = time > 0 && !isCubeSolved;
 
   return (
     <div className="relative">
@@ -42,12 +22,10 @@ export default function ElapsedTimeTracker({ startTime, endTime }: Props) {
           {/* Timer Icon */}
           <motion.div
             className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center"
-            animate={
-              startTime && !endTime ? { scale: [1, 1.1, 1] } : { scale: 1 }
-            }
+            animate={shouldAnimate ? { scale: [1, 1.1, 1] } : { scale: 1 }}
             transition={{
               duration: 1,
-              repeat: startTime && !endTime ? Infinity : 0,
+              repeat: shouldAnimate ? Infinity : 0,
             }}
           >
             <ClockIcon className="w-3 h-3" />
@@ -56,20 +34,24 @@ export default function ElapsedTimeTracker({ startTime, endTime }: Props) {
           {/* Timer Display */}
           <div className="flex flex-col">
             <span className="text-xs text-white/60 uppercase tracking-wider font-medium">
-              {endTime ? "Final Time" : "Elapsed Time"}
+              {isCubeSolved
+                ? "Final Time"
+                : time === 0
+                ? "Time's Up!"
+                : "Remaining Time"}
             </span>
 
             <AnimatePresence mode="wait">
-              {startTime ? (
+              {time > 0 ? (
                 <motion.div
-                  key={elapsedTime}
+                  key={time}
                   className="text-2xl font-bold text-white font-mono"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  {formatTime(elapsedTime)}
+                  {formatTime(time)}
                 </motion.div>
               ) : (
                 <motion.span
@@ -87,23 +69,21 @@ export default function ElapsedTimeTracker({ startTime, endTime }: Props) {
           {/* Status Indicator */}
           <motion.div
             className={`w-2 h-2 rounded-full ${
-              endTime
+              isCubeSolved
                 ? "bg-green-400"
-                : startTime
+                : time > 0
                 ? "bg-yellow-400"
-                : "bg-gray-400"
+                : "bg-red-500"
             }`}
-            animate={
-              startTime && !endTime ? { opacity: [1, 0.3, 1] } : { opacity: 1 }
-            }
+            animate={shouldAnimate ? { opacity: [1, 0.3, 1] } : { opacity: 1 }}
             transition={{
               duration: 1,
-              repeat: startTime && !endTime ? Infinity : 0,
+              repeat: shouldAnimate ? Infinity : 0,
             }}
           />
         </div>
 
-        {startTime && !endTime && (
+        {shouldAnimate && (
           <motion.div
             className="mt-2 h-1 bg-white/10 rounded-full overflow-hidden"
             initial={{ width: 0 }}

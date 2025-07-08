@@ -4,6 +4,8 @@ import CompletionModal from "@/components/CompletionModal";
 import Cube from "@/components/Cube";
 import CubeControls from "@/components/CubeControls";
 import ElapsedTimeTracker from "@/components/ElapsedTimeTracker";
+import Timer from "@/components/Timer";
+import useTimer from "@/hooks/useTimer";
 import { GameDifficulty, GameMode } from "@/lib/types";
 import { useCubeStore } from "@/store/useCubeStore";
 import {
@@ -15,6 +17,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const DEFAULT_TIME = 60 * 2; // 2 minutes in seconds
 
 export default function GamePlayPage() {
   const searchParams = useSearchParams();
@@ -28,6 +32,8 @@ export default function GamePlayPage() {
   const setMoves = useCubeStore((s) => s.setUserMoves);
   const resetCube = useCubeStore((s) => s.resetCube);
   const isCubeSolved = useCubeStore((s) => s.isCubeSolved);
+
+  const time = useTimer(DEFAULT_TIME, isCubeSolved);
 
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
@@ -56,11 +62,7 @@ export default function GamePlayPage() {
     scramble(scrambleMoves);
     setMoves(0);
 
-    if (mode === "Classic" || mode === "Daily") {
-      setStartTime(Date.now());
-    } else {
-      setStartTime(60 * 2000);
-    }
+    setStartTime(Date.now());
     setEndTime(null);
   }, [mode, difficulty, router, scramble, resetCube, setMoves]);
 
@@ -72,7 +74,7 @@ export default function GamePlayPage() {
       if (endTime) {
         setShowCompletionModal(true);
       }
-    }, 10000);
+    }, 5000);
   }, [isCubeSolved, startTime, endTime]);
 
   return (
@@ -80,7 +82,12 @@ export default function GamePlayPage() {
       {/* Header Section */}
       <div className="pt-20 pb-6 px-4 flex-shrink-0">
         <div className="flex flex-col items-center space-y-4">
-          <ElapsedTimeTracker startTime={startTime} endTime={endTime} />
+          {mode === "Classic" || mode === "Daily" ? (
+            <ElapsedTimeTracker startTime={startTime} endTime={endTime} />
+          ) : null}
+          {mode === "TimeAttack" && (
+            <Timer time={time} isCubeSolved={isCubeSolved} />
+          )}
 
           {/* Game Info Cards */}
           <div className="flex flex-wrap justify-center gap-3">
