@@ -1,10 +1,12 @@
 "use client";
 
 import CompletionModal from "@/components/CompletionModal";
+import Confetti from "@/components/Confetti";
 import Cube from "@/components/Cube";
 import CubeControls from "@/components/CubeControls";
 import ElapsedTimeTracker from "@/components/ElapsedTimeTracker";
 import Timer from "@/components/Timer";
+import { useSound } from "@/hooks/useSound";
 import useTimer from "@/hooks/useTimer";
 import { GameDifficulty, GameMode } from "@/lib/types";
 import { useCubeStore } from "@/store/useCubeStore";
@@ -33,11 +35,13 @@ export default function GamePlayPage() {
   const resetCube = useCubeStore((s) => s.resetCube);
   const isCubeSolved = useCubeStore((s) => s.isCubeSolved);
 
-  const time = useTimer(DEFAULT_TIME, isCubeSolved);
+  const remainingTime = useTimer(DEFAULT_TIME, isCubeSolved);
+  const { playWinningSound, playTickingSound, playUrgentSound } = useSound();
 
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (!mode) {
@@ -69,13 +73,26 @@ export default function GamePlayPage() {
   useEffect(() => {
     if (isCubeSolved && startTime && !endTime) {
       setEndTime(Date.now());
+      setShowConfetti(true);
+      playWinningSound();
     }
     setTimeout(() => {
       if (endTime) {
         setShowCompletionModal(true);
       }
-    }, 5000);
-  }, [isCubeSolved, startTime, endTime]);
+    }, 3000); // 3s is the duration for confetti and sound effect
+  }, [isCubeSolved, startTime, endTime, playWinningSound]);
+
+  // Sound effect for urgent timer
+  useEffect(() => {
+    if (mode === "TimeAttack") {
+      if (remainingTime <= 10 && remainingTime > 0 && !isCubeSolved) {
+        playUrgentSound();
+      } else if (remainingTime > 10) {
+        playTickingSound();
+      }
+    }
+  }, [remainingTime, mode, isCubeSolved, playUrgentSound, playTickingSound]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-900 to-black/50 flex flex-col">
@@ -86,7 +103,7 @@ export default function GamePlayPage() {
             <ElapsedTimeTracker startTime={startTime} endTime={endTime} />
           ) : null}
           {mode === "TimeAttack" && (
-            <Timer time={time} isCubeSolved={isCubeSolved} />
+            <Timer time={remainingTime} isCubeSolved={isCubeSolved} />
           )}
 
           {/* Game Info Cards */}
@@ -167,6 +184,8 @@ export default function GamePlayPage() {
         showScramble={false}
         showSolve={true}
       />
+
+      <Confetti isActive={showConfetti} />
 
       <CompletionModal
         isOpen={showCompletionModal}
