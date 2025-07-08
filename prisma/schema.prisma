@@ -67,6 +67,7 @@ model GameResult {
   timeTaken  Float
   difficulty String
   mode       String // "Classic", "TimeAttack", "Daily"
+  status     String // "Completed", "Failed"
   createdAt  DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])

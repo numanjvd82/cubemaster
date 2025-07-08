@@ -20,7 +20,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const DEFAULT_TIME = 60 * 2; // 2 minutes in seconds
+const DEFAULT_TIME = 10; // 2 minutes in seconds
 
 export default function GamePlayPage() {
   const searchParams = useSearchParams();
@@ -93,6 +93,22 @@ export default function GamePlayPage() {
       }
     }
   }, [remainingTime, mode, isCubeSolved, playUrgentSound, playTickingSound]);
+
+  // Handle timer running out in TimeAttack mode
+  useEffect(() => {
+    if (
+      mode === "TimeAttack" &&
+      remainingTime === 0 &&
+      !isCubeSolved &&
+      !endTime
+    ) {
+      setEndTime(Date.now());
+      // Show modal immediately when time runs out (no confetti for failure)
+      setTimeout(() => {
+        setShowCompletionModal(true);
+      }, 1000);
+    }
+  }, [mode, remainingTime, isCubeSolved, endTime]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-900 to-black/50 flex flex-col">
@@ -192,6 +208,7 @@ export default function GamePlayPage() {
         startTime={startTime!}
         endTime={endTime!}
         moves={moves}
+        isSolved={isCubeSolved}
       />
     </div>
   );

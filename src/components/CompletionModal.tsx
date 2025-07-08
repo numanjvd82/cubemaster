@@ -12,6 +12,7 @@ interface CompletionModalProps {
   startTime: number;
   endTime: number;
   moves: number;
+  isSolved: boolean;
 }
 
 export default function CompletionModal({
@@ -19,24 +20,35 @@ export default function CompletionModal({
   startTime,
   endTime,
   moves,
+  isSolved,
 }: CompletionModalProps) {
   const router = useRouter();
 
   return (
     <Modal isOpen={isOpen} className="text-center">
-      <div className="text-6xl mb-4">🎉</div>
-      <h2 className="text-3xl font-bold text-white mb-6">Cube Solved!</h2>
+      <div className="text-6xl mb-4">{isSolved ? "🎉" : "⏰"}</div>
+      <h2 className="text-3xl font-bold text-white mb-6">
+        {isSolved ? "Cube Solved!" : "Time's Up!"}
+      </h2>
 
       <div className="space-y-4 mb-8">
         {/* Final Time Card */}
         <div className="bg-black/30 backdrop-blur-md rounded-xl px-4 py-3 border border-white/20">
           <div className="flex items-center justify-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
-              <ClockIcon className="w-3 h-3 text-green-400" />
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                isSolved ? "bg-green-500/20" : "bg-red-500/20"
+              }`}
+            >
+              <ClockIcon
+                className={`w-3 h-3 ${
+                  isSolved ? "text-green-400" : "text-red-400"
+                }`}
+              />
             </div>
             <div>
               <span className="text-xs text-white/60 uppercase tracking-wider font-medium">
-                Final Time
+                {isSolved ? "Final Time" : "Time Used"}
               </span>
               <div className="text-xl font-bold text-white font-mono">
                 {Math.floor((endTime - startTime) / 1000 / 60)
@@ -71,9 +83,13 @@ export default function CompletionModal({
 
       <button
         onClick={() => router.push("/game/select")}
-        className="w-full px-8 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-medium transition-colors"
+        className={`w-full px-8 py-3 rounded-lg text-white font-medium transition-colors ${
+          isSolved
+            ? "bg-indigo-600 hover:bg-indigo-700"
+            : "bg-red-600 hover:bg-red-700"
+        }`}
       >
-        Play Again
+        {isSolved ? "Play Again" : "Try Again"}
       </button>
     </Modal>
   );
