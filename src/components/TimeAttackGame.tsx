@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useState } from "react";
 
-const DEFAULT_TIME = 60 * 20; // 2 minutes in seconds
+const DEFAULT_TIME = 60 * 2; // 2 minutes in seconds
 
 export default function TimeAttackGame() {
   const { playWinningSound, playTickingSound, playUrgentSound } = useSound();

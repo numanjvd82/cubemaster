@@ -66,7 +66,7 @@ export default function TimeChart({ gameResults }: TimeChartProps) {
   const chartData = completedGames.map((game, index) => ({
     index: index + 1,
     time: game.time,
-    difficulty: game.difficulty || "Unknown",
+    difficulty: game.difficulty || "N/A",
     mode: game.mode,
     date: new Date(game.createdAt).toLocaleDateString("en-US", {
       month: "short",

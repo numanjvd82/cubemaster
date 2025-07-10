@@ -30,10 +30,8 @@ export default function ProfileStats({ gameResults }: ProfileStatsProps) {
   const averageTime =
     completedGames.length > 0
       ? Math.round(
-          completedGames.reduce(
-            (sum, game) => sum + Math.round(game.time / 1000),
-            0
-          ) / completedGames.length
+          completedGames.reduce((sum, game) => sum + Math.round(game.time), 0) /
+            completedGames.length
         )
       : 0;
 
@@ -49,7 +47,7 @@ export default function ProfileStats({ gameResults }: ProfileStatsProps) {
   // Get best time (fastest completion)
   const bestTime =
     completedGames.length > 0
-      ? Math.min(...completedGames.map((game) => Math.round(game.time / 1000)))
+      ? Math.min(...completedGames.map((game) => Math.round(game.time)))
       : 0;
 
   // Get best moves (fewest moves)
@@ -72,6 +70,12 @@ export default function ProfileStats({ gameResults }: ProfileStatsProps) {
 
   // Calculate difficulty breakdown
   const difficultyStats = gameResults.reduce((acc, game) => {
+    if (!game.difficulty && game.mode === "Daily Challenge") {
+      game.difficulty = "Daily Challenge"; // Handle missing difficulty
+    }
+    if (!game.difficulty) {
+      game.difficulty = "Time Attack"; // Default for games without difficulty
+    }
     if (!acc[game.difficulty]) {
       acc[game.difficulty] = { total: 0, solved: 0 };
     }
@@ -81,6 +85,8 @@ export default function ProfileStats({ gameResults }: ProfileStatsProps) {
     }
     return acc;
   }, {} as Record<string, { total: number; solved: number }>);
+
+  console.log(difficultyStats);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
