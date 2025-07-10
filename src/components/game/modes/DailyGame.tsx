@@ -1,13 +1,9 @@
 "use client";
 
-import CameraControls from "@/components/CameraControls";
-import CompletionModal from "@/components/CompletionModal";
-import Confetti from "@/components/Confetti";
-import Cube from "@/components/Cube";
-import CubeControls from "@/components/CubeControls";
-import Timer from "@/components/Timer";
+import { Cube, CubeControls, ElapsedTimeTracker } from "@/components/game";
+import { CameraControls } from "@/components/three";
+import { CompletionModal, Confetti } from "@/components/ui";
 import { useSound } from "@/hooks/useSound";
-import useTimer from "@/hooks/useTimer";
 import { saveGameResult } from "@/lib/actions/saveGameResult";
 import { useCubeStore } from "@/store/useCubeStore";
 import {
@@ -16,10 +12,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useState } from "react";
 
-const DEFAULT_TIME = 60 * 2; // 2 minutes in seconds
-
-export default function TimeAttackGame() {
-  const { playWinningSound, playTickingSound, playUrgentSound } = useSound();
+export default function DailyGame() {
+  const { playWinningSound } = useSound();
 
   const scramble = useCubeStore((s) => s.scramble);
   const moves = useCubeStore((s) => s.userMoves);
@@ -28,20 +22,18 @@ export default function TimeAttackGame() {
   const isCubeSolved = useCubeStore((s) => s.isCubeSolved);
   const setHistory = useCubeStore((s) => s.setHistory);
 
-  const remainingTime = useTimer(DEFAULT_TIME, isCubeSolved);
-
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
+  const [scrambleMoves, setScrambleMoves] = useState(0);
+
   const handleGameSolved = useCallback(async () => {
     try {
       const result = await saveGameResult({
-        mode: "Time Attack",
-        time: isCubeSolved
-          ? Math.floor((endTime! - startTime!) / 1000) // Convert to seconds
-          : DEFAULT_TIME,
+        mode: "Daily Challenge",
+        time: Math.floor((endTime! - startTime!) / 1000), // Convert to seconds
         moves,
         isCubeSolved,
       });
@@ -53,8 +45,26 @@ export default function TimeAttackGame() {
   }, [endTime, startTime, moves, isCubeSolved]);
 
   useEffect(() => {
+    const fetchDailyChallenge = async () => {
+      try {
+        const response = await fetch("/api/daily-challenge");
+
+        const data = await response.json();
+
+        setScrambleMoves(data.scrambleMoves || 50);
+      } catch (error) {
+        console.error("Error fetching daily challenge:", error);
+      }
+    };
+
+    fetchDailyChallenge();
+  }, []);
+
+  useEffect(() => {
+    // Reset and scramble cube for daily challenge
     resetCube();
-    scramble(20); // Fixed 20 moves for time attack
+
+    scramble(scrambleMoves);
     setMoves(0);
     setHistory([]); // Reset history
 
@@ -62,9 +72,8 @@ export default function TimeAttackGame() {
     setEndTime(null);
     setShowCompletionModal(false);
     setShowConfetti(false);
-  }, [scramble, resetCube, setMoves, setHistory]);
+  }, [scramble, resetCube, setMoves, scrambleMoves, setHistory]);
 
-  // Handle cube solved
   useEffect(() => {
     if (isCubeSolved && startTime && !endTime) {
       setEndTime(Date.now());
@@ -72,7 +81,7 @@ export default function TimeAttackGame() {
       playWinningSound();
     }
 
-    if (endTime && isCubeSolved) {
+    if (endTime) {
       handleGameSolved();
       const timer = setTimeout(() => {
         setShowCompletionModal(true);
@@ -82,47 +91,12 @@ export default function TimeAttackGame() {
     }
   }, [isCubeSolved, startTime, endTime, playWinningSound, handleGameSolved]);
 
-  // Handle timer running out
-  useEffect(() => {
-    if (remainingTime === 0 && !isCubeSolved && !endTime) {
-      // Set endTime to startTime + DEFAULT_TIME to show full time was used
-      setEndTime(startTime! + DEFAULT_TIME * 1000);
-      setShowConfetti(false);
-      playUrgentSound();
-      handleGameSolved();
-      setTimeout(() => {
-        setShowCompletionModal(true);
-      }, 1000);
-    }
-  }, [
-    remainingTime,
-    isCubeSolved,
-    endTime,
-    startTime,
-    playUrgentSound,
-    handleGameSolved,
-  ]);
-
-  // Sound effects for urgent timer
-  useEffect(() => {
-    if (remainingTime <= 10 && remainingTime > 0 && !isCubeSolved) {
-      playUrgentSound();
-    } else if (
-      remainingTime > 10 &&
-      remainingTime <= 30 &&
-      remainingTime % 5 === 0 &&
-      !isCubeSolved
-    ) {
-      playTickingSound();
-    }
-  }, [remainingTime, isCubeSolved, playUrgentSound, playTickingSound]);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-900 to-black/50 flex flex-col">
       {/* Header Section */}
       <div className="pt-20 pb-6 px-4 flex-shrink-0">
         <div className="flex flex-col items-center space-y-4">
-          <Timer time={remainingTime} isCubeSolved={isCubeSolved} />
+          <ElapsedTimeTracker startTime={startTime} endTime={endTime} />
 
           {/* Game Info Cards */}
           <div className="flex flex-wrap justify-center gap-3">
@@ -136,9 +110,7 @@ export default function TimeAttackGame() {
                   <span className="text-xs text-white/60 uppercase tracking-wider font-medium block">
                     Mode
                   </span>
-                  <span className="text-lg font-bold text-white">
-                    Time Attack
-                  </span>
+                  <span className="text-lg font-bold text-white">Daily</span>
                 </div>
               </div>
             </div>

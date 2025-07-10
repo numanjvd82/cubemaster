@@ -1,6 +1,4 @@
-import MovesChart from "@/components/MovesChart";
-import ProfileStats from "@/components/ProfileStats";
-import TimeChart from "@/components/TimeChart";
+import { MovesChart, ProfileStats, TimeChart } from "@/components/analytics";
 import { requireAuth } from "@/lib/auth-utils";
 import { Button } from "@headlessui/react";
 import Link from "next/link";

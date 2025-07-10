@@ -1,10 +1,10 @@
 "use client";
+import Cubelet, { Face } from "@/components/game/cube/Cubelet";
+import RotatingLayer from "@/components/game/cube/RotatingLayer";
 import { useCubeStore } from "@/store/useCubeStore";
 import { useThree } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 import * as THREE from "three";
-import Cubelet, { Face } from "./Cubelet";
-import RotatingLayer from "./RotatingLayer";
 
 export default function Scene() {
   const cube = useCubeStore((s) => s.cube);

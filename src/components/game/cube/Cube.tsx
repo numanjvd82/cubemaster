@@ -1,8 +1,8 @@
 "use client";
+import Scene from "@/components/three/Scene";
 import { useCubeStore } from "@/store/useCubeStore";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import Scene from "./Scene";
 
 export default function Cube() {
   const freeLook = useCubeStore((s) => s.freeLook);

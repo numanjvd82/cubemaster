@@ -1,6 +1,6 @@
 "use client";
 
-import { PatternOverlay } from "@/components/landing/PatternOverlay";
+import { PatternOverlay } from "@/components/landing";
 import { GameDifficulty, GameMode } from "@/lib/types";
 import { Button } from "@headlessui/react";
 import {

@@ -1,6 +1,6 @@
 "use client";
 
-import { PatternOverlay } from "@/components/landing/PatternOverlay";
+import { PatternOverlay } from "@/components/landing";
 import { Button } from "@headlessui/react";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { signIn, useSession } from "next-auth/react";

@@ -1,8 +1,6 @@
 "use client";
 
-import ClassicGame from "@/components/ClassicGame";
-import DailyGame from "@/components/DailyGame";
-import TimeAttackGame from "@/components/TimeAttackGame";
+import { ClassicGame, DailyGame, TimeAttackGame } from "@/components/game";
 import { GameDifficulty, GameMode } from "@/lib/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -19,7 +17,7 @@ export default function GamePlayPage() {
       router.push("/game/select");
       return;
     }
-  }, [mode, router]);
+  }, [mode]);
 
   if (!mode) {
     return null;

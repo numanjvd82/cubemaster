@@ -1,4 +1,4 @@
-import { Face, FaceColorMap } from "@/components/Cubelet";
+import { Face, FaceColorMap } from "@/components/game/cube/Cubelet";
 import { createSolvedCube, isCubeSolved } from "@/lib/cubeLogic";
 import { create } from "zustand";
 

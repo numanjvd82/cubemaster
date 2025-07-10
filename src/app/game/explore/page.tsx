@@ -1,8 +1,7 @@
 "use client";
 
-import CameraControls from "@/components/CameraControls";
-import Cube from "@/components/Cube";
-import CubeControls from "@/components/CubeControls";
+import { Cube, CubeControls } from "@/components/game";
+import { CameraControls } from "@/components/three";
 import { Button } from "@headlessui/react";
 import { ArrowRightIcon, PlayIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";

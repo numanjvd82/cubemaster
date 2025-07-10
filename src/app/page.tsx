@@ -1,14 +1,16 @@
 "use client";
 
 import {
+  LandingFeatures,
+  LandingHero,
+  LandingInfo,
+  PatternOverlay,
+  SectionDivider,
+} from "@/components/landing";
+import {
   BackgroundParticles,
   OrbitalRing,
 } from "@/components/landing/BackgroundEffects";
-import { LandingFeatures } from "@/components/landing/LandingFeatures";
-import { LandingHero } from "@/components/landing/LandingHero";
-import { LandingInfo } from "@/components/landing/LandingInfo";
-import { PatternOverlay } from "@/components/landing/PatternOverlay";
-import SectionDivider from "@/components/landing/SectionDivider";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { motion } from "motion/react";

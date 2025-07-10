@@ -1,11 +1,8 @@
 "use client";
 
-import CameraControls from "@/components/CameraControls";
-import CompletionModal from "@/components/CompletionModal";
-import Confetti from "@/components/Confetti";
-import Cube from "@/components/Cube";
-import CubeControls from "@/components/CubeControls";
-import ElapsedTimeTracker from "@/components/ElapsedTimeTracker";
+import { Cube, CubeControls, ElapsedTimeTracker } from "@/components/game";
+import { CameraControls } from "@/components/three";
+import { CompletionModal, Confetti } from "@/components/ui";
 import { useSound } from "@/hooks/useSound";
 import { saveGameResult } from "@/lib/actions/saveGameResult";
 import { GameDifficulty } from "@/lib/types";
