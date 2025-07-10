@@ -75,6 +75,6 @@ model GameResult {
 
 model DailyChallenge {
   id       String   @id @default(uuid())
-  scramble String
+  scramble Int
   date     DateTime @unique
 }

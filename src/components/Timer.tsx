@@ -35,34 +35,23 @@ export default function Timer({ time, isCubeSolved }: Props) {
           <div className="flex flex-col">
             <span className="text-xs text-white/60 uppercase tracking-wider font-medium">
               {isCubeSolved
-                ? "Final Time"
+                ? "Time Remaining"
                 : time === 0
                 ? "Time's Up!"
                 : "Remaining Time"}
             </span>
 
             <AnimatePresence mode="wait">
-              {time > 0 ? (
-                <motion.div
-                  key={time}
-                  className="text-2xl font-bold text-white font-mono"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {formatTime(time)}
-                </motion.div>
-              ) : (
-                <motion.span
-                  className="text-2xl font-bold text-white/50 font-mono"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  00:00
-                </motion.span>
-              )}
+              <motion.div
+                key={time}
+                className="text-2xl font-bold text-white font-mono"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {formatTime(time)}
+              </motion.div>
             </AnimatePresence>
           </div>
 

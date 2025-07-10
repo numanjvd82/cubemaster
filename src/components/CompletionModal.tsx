@@ -1,5 +1,6 @@
 "use client";
 
+import { formatTime } from "@/lib/utils";
 import {
   ClipboardDocumentListIcon,
   ClockIcon,
@@ -51,13 +52,7 @@ export default function CompletionModal({
                 {isSolved ? "Final Time" : "Time Used"}
               </span>
               <div className="text-xl font-bold text-white font-mono">
-                {Math.floor((endTime - startTime) / 1000 / 60)
-                  .toString()
-                  .padStart(2, "0")}
-                :
-                {(Math.floor((endTime - startTime) / 1000) % 60)
-                  .toString()
-                  .padStart(2, "0")}
+                {formatTime(Math.floor((endTime - startTime) / 1000))}
               </div>
             </div>
           </div>
@@ -81,16 +76,25 @@ export default function CompletionModal({
         </div>
       </div>
 
-      <button
-        onClick={() => router.push("/game/select")}
-        className={`w-full px-8 py-3 rounded-lg text-white font-medium transition-colors ${
-          isSolved
-            ? "bg-indigo-600 hover:bg-indigo-700"
-            : "bg-red-600 hover:bg-red-700"
-        }`}
-      >
-        {isSolved ? "Play Again" : "Try Again"}
-      </button>
+      <div className="flex flex-col gap-3">
+        <button
+          onClick={() => router.push("/game/select")}
+          className={`w-full px-8 py-3 rounded-lg text-white font-medium transition-colors ${
+            isSolved
+              ? "bg-indigo-600 hover:bg-indigo-700"
+              : "bg-red-600 hover:bg-red-700"
+          }`}
+        >
+          {isSolved ? "Play Again" : "Try Again"}
+        </button>
+
+        <button
+          onClick={() => router.push("/profile")}
+          className="w-full px-8 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-medium transition-colors border border-white/20"
+        >
+          View Profile
+        </button>
+      </div>
     </Modal>
   );
 }

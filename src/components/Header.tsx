@@ -12,6 +12,7 @@ import { UserIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
 
@@ -65,6 +66,18 @@ export default function Header() {
                   </p>
                 </div>
                 <div className="py-1">
+                  <MenuItem>
+                    {({ active }) => (
+                      <Link
+                        href="/profile"
+                        className={`${
+                          active ? "bg-gray-100" : ""
+                        } group flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                      >
+                        View Profile
+                      </Link>
+                    )}
+                  </MenuItem>
                   <MenuItem>
                     {({ active }) => (
                       <button
