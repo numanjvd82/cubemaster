@@ -30,6 +30,7 @@ export default function ClassicGame({ difficulty }: ClassicGameProps) {
   const setMoves = useCubeStore((s) => s.setUserMoves);
   const resetCube = useCubeStore((s) => s.resetCube);
   const isCubeSolved = useCubeStore((s) => s.isCubeSolved);
+  const setHistory = useCubeStore((s) => s.setHistory);
 
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
@@ -44,12 +45,13 @@ export default function ClassicGame({ difficulty }: ClassicGameProps) {
       difficulty === "Easy" ? 5 : difficulty === "Medium" ? 15 : 30;
     scramble(scrambleMoves);
     setMoves(0);
+    setHistory([]); // Reset history
 
     setStartTime(Date.now());
     setEndTime(null);
     setShowCompletionModal(false);
     setShowConfetti(false);
-  }, [difficulty, scramble, resetCube, setMoves]);
+  }, [difficulty, scramble, resetCube, setMoves, setHistory]);
 
   useEffect(() => {
     const handleGameSolved = async () => {

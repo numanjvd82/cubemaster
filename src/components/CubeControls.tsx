@@ -10,6 +10,7 @@ import {
   PuzzlePieceIcon,
 } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 type Props = {
   showReset?: boolean;
@@ -36,6 +37,14 @@ export default function CubeControls({
   const canUndo = history.length > 0;
   const canRedo = future.length > 0;
 
+  const [isBeingSolved, setIsBeingSolved] = useState(false);
+
+  const handleSolve = async () => {
+    setIsBeingSolved(true);
+    await solve();
+    setIsBeingSolved(false);
+  };
+
   return (
     <motion.div
       className="fixed left-4 top-1/2 transform -translate-y-1/2 z-20"
@@ -55,7 +64,7 @@ export default function CubeControls({
             disabled={!canUndo}
             className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200 ${
               canUndo
-                ? "bg-indigo-600/80 hover:bg-indigo-700/90 text-white shadow-lg"
+                ? "bg-indigo-600/80 hover:bg-indigo-700/90 text-white shadow-lg cursor-pointer"
                 : "bg-gray-600/50 text-gray-400 cursor-not-allowed"
             }`}
             title="Undo"
@@ -75,7 +84,7 @@ export default function CubeControls({
             disabled={!canRedo}
             className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200 ${
               canRedo
-                ? "bg-indigo-600/80 hover:bg-indigo-700/90 text-white shadow-lg"
+                ? "bg-indigo-600/80 hover:bg-indigo-700/90 text-white shadow-lg cursor-pointer"
                 : "bg-gray-600/50 text-gray-400 cursor-not-allowed"
             }`}
             title="Redo"
@@ -95,7 +104,7 @@ export default function CubeControls({
           >
             <Button
               onClick={() => resetCube()}
-              className="w-10 h-10 rounded-lg flex items-center justify-center bg-red-600/80 hover:bg-red-700/90 text-white transition-all duration-200 shadow-lg"
+              className="w-10 h-10 rounded-lg flex items-center justify-center bg-red-600/80 hover:bg-red-700/90 text-white transition-all duration-200 shadow-lg cursor-pointer"
               title="Reset Cube"
             >
               <ArrowPathIcon className="w-5 h-5" />
@@ -111,7 +120,7 @@ export default function CubeControls({
           >
             <Button
               onClick={() => scramble(10)}
-              className="w-10 h-10 rounded-lg flex items-center justify-center bg-yellow-600/80 hover:bg-yellow-700/90 text-white transition-all duration-200 shadow-lg"
+              className="w-10 h-10 rounded-lg flex items-center justify-center bg-yellow-600/80 hover:bg-yellow-700/90 text-white transition-all duration-200 shadow-lg cursor-pointer"
               title="Scramble Cube"
             >
               <PuzzlePieceIcon className="w-5 h-5" />
@@ -126,8 +135,12 @@ export default function CubeControls({
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
             <Button
-              onClick={() => solve()}
-              className="w-10 h-10 rounded-lg flex items-center justify-center bg-green-600/80 hover:bg-green-700/90 text-white transition-all duration-200 shadow-lg"
+              onClick={() => handleSolve()}
+              className={`w-10 h-10 rounded-lg flex items-center justify-center  transition-all duration-200 shadow-lg cursor-pointer ${
+                isBeingSolved
+                  ? "bg-gray-600/50 text-gray-400 cursor-not-allowed"
+                  : "bg-green-600/80 hover:bg-green-700/90 text-white"
+              }`}
               title="Solve Cube"
             >
               <CheckCircleIcon className="w-5 h-5" />
@@ -146,7 +159,7 @@ export default function CubeControls({
           >
             <Button
               onClick={() => setFreeLook(!freeLook)}
-              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200 shadow-lg ${
+              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200 shadow-lg cursor-pointer ${
                 freeLook
                   ? "bg-purple-600/80 hover:bg-purple-700/90 text-white"
                   : "bg-gray-600/80 hover:bg-gray-700/90 text-white"

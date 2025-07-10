@@ -2,7 +2,9 @@ import MovesChart from "@/components/MovesChart";
 import ProfileStats from "@/components/ProfileStats";
 import TimeChart from "@/components/TimeChart";
 import { authOptions } from "@/lib/auth";
+import { Button } from "@headlessui/react";
 import { getServerSession } from "next-auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 interface GameResult {
@@ -96,6 +98,14 @@ export default async function ProfilePage() {
             </div>
           </div>
         )}
+
+        <div className="flex items-center justify-end mb-8">
+          <Link href="/game/select">
+            <Button className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 mb-4">
+              Play Now
+            </Button>
+          </Link>
+        </div>
 
         {/* Profile Content */}
         {profileData && (

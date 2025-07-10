@@ -49,7 +49,7 @@ export default function ProfileStats({ gameResults }: ProfileStatsProps) {
   // Get best time (fastest completion)
   const bestTime =
     completedGames.length > 0
-      ? Math.min(...completedGames.map((game) => Math.round(game.time / 1000))) // Convert milliseconds to seconds
+      ? Math.min(...completedGames.map((game) => Math.round(game.time / 1000)))
       : 0;
 
   // Get best moves (fewest moves)

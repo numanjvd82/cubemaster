@@ -7,10 +7,11 @@ type Move = { axis: "x" | "y" | "z"; layer: number; direction: 1 | -1 };
 type CubeStore = {
   cube: ReturnType<typeof createSolvedCube>;
   history: ReturnType<typeof createSolvedCube>[];
+  setHistory: (history: ReturnType<typeof createSolvedCube>[]) => void;
   future: ReturnType<typeof createSolvedCube>[];
   moveHistory: Move[];
   scramble: (n: number) => void;
-  solve: () => void;
+  solve: () => Promise<void>;
   isCubeSolved: boolean;
   userMoves: number;
   setUserMoves: (moves: number) => void;
@@ -29,6 +30,7 @@ type CubeStore = {
 export const useCubeStore = create<CubeStore>((set, get) => ({
   cube: createSolvedCube(),
   history: [],
+  setHistory: (history) => set({ history }),
   future: [],
   userMoves: 0,
   isCubeSolved: false,
@@ -173,26 +175,29 @@ export const useCubeStore = create<CubeStore>((set, get) => ({
   },
 
   solve: () => {
-    const { moveHistory, rotateLayer } = get();
-    const reversed = [...moveHistory].reverse();
+    return new Promise<void>((resolve) => {
+      const { moveHistory, rotateLayer } = get();
+      const reversed = [...moveHistory].reverse();
 
-    function step(i: number) {
-      if (i >= reversed.length) {
-        set({ moveHistory: [] }); // clear after solving
-        return;
+      function step(i: number) {
+        if (i >= reversed.length) {
+          set({ moveHistory: [] }); // clear after solving
+          resolve(); // ✅ solving done
+          return;
+        }
+
+        const move = reversed[i];
+        rotateLayer(
+          move.axis,
+          move.layer as -1 | 0 | 1,
+          (move.direction * -1) as 1 | -1
+        );
+
+        setTimeout(() => step(i + 1), 300);
       }
 
-      const move = reversed[i];
-      rotateLayer(
-        move.axis,
-        move.layer as -1 | 0 | 1,
-        (move.direction * -1) as 1 | -1
-      );
-
-      setTimeout(() => step(i + 1), 300);
-    }
-
-    step(0);
+      step(0);
+    });
   },
 
   moveHistory: [],

@@ -66,7 +66,7 @@ export default function GameSelect() {
                 <Button
                   key={m.key}
                   onClick={() => setMode(m.key as GameMode)}
-                  className={`p-4 rounded-xl border transition-all duration-200 ${
+                  className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
                     mode === m.key
                       ? "bg-indigo-600/80 border-indigo-400/50 text-white shadow-lg transform scale-105"
                       : "bg-black/20 border-white/20 hover:bg-indigo-800/30 hover:border-indigo-400/30 text-white/90"
@@ -131,7 +131,7 @@ export default function GameSelect() {
                     <Button
                       key={d.key}
                       onClick={() => setDifficulty(d.key as GameDifficulty)}
-                      className={`p-4 rounded-xl border transition-all duration-200 ${
+                      className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
                         isSelected
                           ? `${colors.selected} text-white shadow-lg transform scale-105`
                           : "bg-black/20 border-white/20 hover:bg-white/10 hover:border-white/30 text-white/90"
@@ -165,7 +165,7 @@ export default function GameSelect() {
               className={`flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-medium transition-all duration-200 ${
                 !mode || (mode === "Classic" && !difficulty)
                   ? "bg-gray-600/30 border border-gray-500/30 cursor-not-allowed text-gray-400"
-                  : "bg-indigo-600/80 hover:bg-indigo-700/90 border border-indigo-400/50 hover:border-indigo-300/70 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                  : "bg-indigo-600/80 hover:bg-indigo-700/90 border border-indigo-400/50 hover:border-indigo-300/70 text-white shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
               }`}
             >
               <PlayIcon className="w-5 h-5" />

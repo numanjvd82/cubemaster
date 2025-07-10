@@ -79,7 +79,7 @@ export default function CompletionModal({
       <div className="flex flex-col gap-3">
         <button
           onClick={() => router.push("/game/select")}
-          className={`w-full px-8 py-3 rounded-lg text-white font-medium transition-colors ${
+          className={`w-full px-8 py-3 rounded-lg text-white font-medium transition-colors cursor-pointer ${
             isSolved
               ? "bg-indigo-600 hover:bg-indigo-700"
               : "bg-red-600 hover:bg-red-700"
@@ -90,7 +90,7 @@ export default function CompletionModal({
 
         <button
           onClick={() => router.push("/profile")}
-          className="w-full px-8 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-medium transition-colors border border-white/20"
+          className="w-full px-8 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-medium transition-colors border border-white/20 cursor-pointer"
         >
           View Profile
         </button>

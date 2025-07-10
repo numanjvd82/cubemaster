@@ -25,6 +25,7 @@ export default function TimeAttackGame() {
   const setMoves = useCubeStore((s) => s.setUserMoves);
   const resetCube = useCubeStore((s) => s.resetCube);
   const isCubeSolved = useCubeStore((s) => s.isCubeSolved);
+  const setHistory = useCubeStore((s) => s.setHistory);
 
   const remainingTime = useTimer(DEFAULT_TIME, isCubeSolved);
 
@@ -54,12 +55,13 @@ export default function TimeAttackGame() {
     resetCube();
     scramble(20); // Fixed 20 moves for time attack
     setMoves(0);
+    setHistory([]); // Reset history
 
     setStartTime(Date.now());
     setEndTime(null);
     setShowCompletionModal(false);
     setShowConfetti(false);
-  }, [scramble, resetCube, setMoves]);
+  }, [scramble, resetCube, setMoves, setHistory]);
 
   // Handle cube solved
   useEffect(() => {

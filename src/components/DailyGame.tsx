@@ -22,6 +22,7 @@ export default function DailyGame() {
   const setMoves = useCubeStore((s) => s.setUserMoves);
   const resetCube = useCubeStore((s) => s.resetCube);
   const isCubeSolved = useCubeStore((s) => s.isCubeSolved);
+  const setHistory = useCubeStore((s) => s.setHistory);
 
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
@@ -67,12 +68,13 @@ export default function DailyGame() {
 
     scramble(scrambleMoves);
     setMoves(0);
+    setHistory([]); // Reset history
 
     setStartTime(Date.now());
     setEndTime(null);
     setShowCompletionModal(false);
     setShowConfetti(false);
-  }, [scramble, resetCube, setMoves, scrambleMoves]);
+  }, [scramble, resetCube, setMoves, scrambleMoves, setHistory]);
 
   useEffect(() => {
     if (isCubeSolved && startTime && !endTime) {

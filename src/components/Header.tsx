@@ -25,18 +25,20 @@ export default function Header() {
   const isHomePage = pathname === "/";
   const headerClasses = isHomePage
     ? "h-16 p-2 flex justify-between items-center z-50 backdrop-blur-md bg-white/10 border-b border-white/20 fixed top-0 left-0 right-0 shadow-lg"
-    : "h-16 p-2 flex justify-between items-center z-20 backdrop-blur-md bg-indigo-600/40 border-b border-white/20 shadow-lg";
+    : "h-16 p-2 flex justify-between items-center z-50 backdrop-blur-md bg-indigo-600/40 border-b border-white/20 shadow-lg relative";
 
   return (
     <header className={headerClasses}>
-      <h1 className="text-2xl font-bold text-white">Cube Master</h1>
+      <Link href="/">
+        <h1 className="text-2xl font-bold text-white">Cube Master</h1>
+      </Link>
 
       <div>
         {isLoading ? (
           <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
         ) : session ? (
-          <Menu as="div" className="relative inline-block text-left ">
-            <MenuButton className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors">
+          <Menu as="div" className="relative inline-block text-left z-50">
+            <MenuButton className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors cursor-pointer">
               {session.user?.image ? (
                 <Image
                   src={session.user.image}
@@ -58,7 +60,7 @@ export default function Header() {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <MenuItems className="absolute right-4 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-gray-900 z-50">
+              <MenuItems className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none text-gray-900 z-[9999]">
                 <div className="px-4 py-3">
                   <p className="text-sm">Signed in as</p>
                   <p className="text-sm font-medium truncate ">
@@ -84,7 +86,7 @@ export default function Header() {
                         onClick={() => signOut()}
                         className={`${
                           active ? "bg-gray-100" : ""
-                        } group flex w-full items-center px-4 py-2 text-sm text-gray-700`}
+                        } group flex w-full items-center px-4 py-2 text-sm text-gray-700 cursor-pointer`}
                       >
                         Sign out
                       </button>
