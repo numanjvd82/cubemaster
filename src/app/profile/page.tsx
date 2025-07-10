@@ -1,11 +1,9 @@
 import MovesChart from "@/components/MovesChart";
 import ProfileStats from "@/components/ProfileStats";
 import TimeChart from "@/components/TimeChart";
-import { authOptions } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth-utils";
 import { Button } from "@headlessui/react";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 interface GameResult {
   id: string;
@@ -27,10 +25,10 @@ interface ProfileData {
 }
 
 async function fetchProfileData(): Promise<ProfileData> {
-  const session = await getServerSession(authOptions);
+  const session = await requireAuth();
 
-  if (!session || !session.user?.email) {
-    throw new Error("Not authenticated");
+  if (!session.user?.email) {
+    throw new Error("User email not found");
   }
 
   const { prisma } = await import("@/lib/db");
@@ -68,12 +66,7 @@ async function fetchProfileData(): Promise<ProfileData> {
 }
 
 export default async function ProfilePage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect("/");
-  }
-
+  // Auth check is handled in fetchProfileData
   let profileData: ProfileData | null = null;
   let error: string | null = null;
 

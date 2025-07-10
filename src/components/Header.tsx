@@ -10,16 +10,17 @@ import {
 } from "@headlessui/react";
 import { UserIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Fragment } from "react";
 
 export default function Header() {
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
   const pathname = usePathname();
+  const router = useRouter();
 
   // Only fix the header on the home page
   const isHomePage = pathname === "/";
@@ -98,7 +99,7 @@ export default function Header() {
           </Menu>
         ) : (
           <Button
-            onClick={() => signIn("google")}
+            onClick={() => router.push("/signin")}
             className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-lg text-white transition-colors"
           >
             <svg
