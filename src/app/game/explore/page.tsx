@@ -1,5 +1,6 @@
 "use client";
 
+import CameraControls from "@/components/CameraControls";
 import Cube from "@/components/Cube";
 import CubeControls from "@/components/CubeControls";
 import { Button } from "@headlessui/react";
@@ -57,6 +58,7 @@ export default function Explore() {
       )}
 
       <main className="h-full w-full flex flex-col items-center justify-center">
+        <CameraControls />
         <CubeControls
           showReset={true}
           showScramble={true}

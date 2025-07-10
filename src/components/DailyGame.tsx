@@ -1,5 +1,6 @@
 "use client";
 
+import CameraControls from "@/components/CameraControls";
 import CompletionModal from "@/components/CompletionModal";
 import Confetti from "@/components/Confetti";
 import Cube from "@/components/Cube";
@@ -137,6 +138,7 @@ export default function DailyGame() {
         </div>
       </div>
 
+      <CameraControls className="top-18" />
       <Cube />
 
       <CubeControls
