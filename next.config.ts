@@ -9,6 +9,19 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverExternalPackages: ["@prisma/client"],
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push({
+        "@prisma/client": "commonjs @prisma/client",
+      });
+    }
+    return config;
+  },
+  // Ensure static files are included in the build
+  async rewrites() {
+    return [];
+  },
 };
 
 export default nextConfig;

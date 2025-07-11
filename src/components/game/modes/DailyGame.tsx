@@ -39,7 +39,7 @@ export default function DailyGame() {
       });
 
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error handling game solved:", error);
     }
   }, [endTime, startTime, moves, isCubeSolved]);

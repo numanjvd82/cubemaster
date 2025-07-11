@@ -63,7 +63,7 @@ export default function ClassicGame({ difficulty }: ClassicGameProps) {
         });
 
         return result;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error handling game solved:", error);
       }
     };
