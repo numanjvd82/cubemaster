@@ -1,12 +1,13 @@
 "use client";
 
 import { ClassicGame, TimeAttackGame } from "@/components/game";
+import { Loader } from "@/components/ui";
 import { GameDifficulty, GameMode } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
-export default function GamePlayPage() {
+function GamePlayContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -19,21 +20,14 @@ export default function GamePlayPage() {
       router.push("/game/select");
       return;
     }
-  }, [mode]);
+  }, [mode, router]);
 
   if (!mode) {
     return null;
   }
 
   if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-          <p className="text-white/70">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loader text="Loading game..." />;
   }
 
   if (!session) {
@@ -59,4 +53,12 @@ export default function GamePlayPage() {
       router.push("/game/select");
       return null;
   }
+}
+
+export default function GamePlayPage() {
+  return (
+    <Suspense fallback={<Loader text="Loading game..." />}>
+      <GamePlayContent />
+    </Suspense>
+  );
 }

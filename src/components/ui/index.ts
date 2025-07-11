@@ -7,3 +7,6 @@ export { default as Modal } from "./modals/Modal";
 
 // Effects Components
 export { default as Confetti } from "./effects/Confetti";
+
+// Loading Components
+export { default as Loader } from "./Loader";

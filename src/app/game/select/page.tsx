@@ -1,6 +1,7 @@
 "use client";
 
 import { PatternOverlay } from "@/components/landing";
+import { Loader } from "@/components/ui";
 import { GameDifficulty, GameMode } from "@/lib/types";
 import { Button } from "@headlessui/react";
 import {
@@ -38,14 +39,7 @@ export default function GameSelect() {
   };
 
   if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-          <p className="text-white/70">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loader text="Loading game modes..." />;
   }
 
   if (!session) {

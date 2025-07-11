@@ -3,6 +3,9 @@ import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import DailyGameClient from "./DailyGameClient";
 
+// Force dynamic rendering since we use authentication
+export const dynamic = "force-dynamic";
+
 export default async function DailyGamePage() {
   const session = await requireAuth();
 

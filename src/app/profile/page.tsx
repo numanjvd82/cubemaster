@@ -3,6 +3,9 @@ import { requireAuth } from "@/lib/auth-utils";
 import { Button } from "@headlessui/react";
 import Link from "next/link";
 
+// Force dynamic rendering since we use authentication
+export const dynamic = "force-dynamic";
+
 interface GameResult {
   id: string;
   mode: string;
