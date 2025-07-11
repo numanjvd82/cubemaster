@@ -79,37 +79,6 @@ A fully interactive **3D Rubik's Cube simulator** with multiple game modes, user
 
 ---
 
-## 🎮 How to Play
-
-### Controls
-
-| Action          | Description                                |
-| --------------- | ------------------------------------------ |
-| **Rotate face** | Click and drag on any cubelet face         |
-| **Undo / Redo** | Navigate through move history              |
-| **Scramble**    | Randomize cube with difficulty-based moves |
-| **Reset**       | Return instantly to solved state           |
-| **Solve**       | Auto-solve by reverting all moves          |
-| **Free Look**   | Toggle orbit camera control                |
-
-### Game Modes
-
-- **Classic**: Choose difficulty and solve at your own pace
-- **Time Attack**: Beat your personal best times
-- **Daily Challenge**: Complete today's special scramble
-- **Explore**: Practice without pressure
-
----
-
-## 📱 Screenshots
-
-_Landing page with game mode selection_
-_3D cube interface with controls_
-_Profile page with statistics_
-_Performance charts and analytics_
-
----
-
 ## � Getting Started
 
 ### Prerequisites
@@ -235,49 +204,6 @@ src/
 └── prisma/               # Database schema and migrations
 ```
 
----
-
-## 🎯 Game Features
-
-### Difficulty Levels
-
-- **Easy**: 10-15 moves scramble
-- **Medium**: 20-25 moves scramble
-- **Hard**: 30+ moves scramble
-
-### Scoring System
-
-- **Time-based scoring** for speed solving
-- **Move efficiency** ratings
-- **Streak tracking** for consecutive solves
-- **Personal records** and achievements
-
-### Daily Challenges
-
-- **Unique scrambles** updated daily
-- **Leaderboards** for competitive play
-- **Streak bonuses** for consistent participation
-
----
-
-## 📊 Analytics Dashboard
-
-### Personal Statistics
-
-- **Total solves** across all modes
-- **Average solve time** with trends
-- **Best/worst times** tracking
-- **Move efficiency** analysis
-
-### Performance Charts
-
-- **Solve times** over time
-- **Move count** optimization
-- **Success rate** by difficulty
-- **Daily activity** heatmap
-
----
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -294,14 +220,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🙏 Acknowledgments
-
-- **React Three Fiber** community for 3D React components
-- **Prisma** team for the excellent database toolkit
-- **NextAuth** for seamless authentication
-- **Vercel** for hosting and deployment
-
----
 
 ## 🐛 Known Issues
 
@@ -320,4 +238,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️ by [Your Name]**
+**Made with ❤️ by [numanjvd82]**
