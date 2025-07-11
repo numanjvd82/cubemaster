@@ -166,17 +166,7 @@ If you encounter Prisma engine errors during deployment:
    NEXTAUTH_SECRET="your-secret"
    ```
 
-2. **Manual troubleshooting:**
-
-   ```bash
-   # Run the deployment check script
-   ./scripts/deploy-check.sh
-
-   # Or manually check engine files
-   ls -la src/generated/prisma/libquery_engine-*.so.node
-   ```
-
-3. **Common solutions:**
+2. **Common solutions:**
    - Ensure database migrations are up to date
    - Check that all environment variables are correctly set
    - Verify that the database is accessible from your deployment environment
