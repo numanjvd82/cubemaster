@@ -10,17 +10,24 @@ import {
   ExclamationTriangleIcon,
   PlayIcon,
 } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function GameSelect() {
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const [mode, setMode] = useState<GameMode | null>(null);
   const [difficulty, setDifficulty] = useState<GameDifficulty | null>(null);
 
   const handleStart = () => {
     if (!mode) return;
+
+    if (mode === "Daily") {
+      router.push("/game/play/daily");
+      return;
+    }
 
     const query = new URLSearchParams();
     query.set("mode", mode);
@@ -29,6 +36,21 @@ export default function GameSelect() {
     }
     router.push(`/game/play?${query.toString()}`);
   };
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+          <p className="text-white/70">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    redirect("/signin");
+  }
 
   return (
     <PatternOverlay pattern="squares" opacity={0.08}>
